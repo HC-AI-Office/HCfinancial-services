@@ -27,8 +27,12 @@ jobs:
         id: cli-cache
         uses: actions/cache@v4
         with:
-          path: ~/.local/bin/claude
-          key: claude-cli-${{ runner.os }}-${{ env.CLAUDE_VERSION }}
+          # ~/.local/bin/claude is a symlink into the versioned dir below —
+          # both must be cached or the restored symlink dangles (exit 127).
+          path: |
+            ~/.local/bin/claude
+            ~/.local/share/claude
+          key: claude-cli-${{ runner.os }}-${{ env.CLAUDE_VERSION }}-v2
 
       - name: Install Claude Code CLI
         if: steps.cli-cache.outputs.cache-hit != 'true'
